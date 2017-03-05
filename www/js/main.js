@@ -8,12 +8,75 @@ $( document ).ready(function() {
 	h =  $('canvas').height();
 	go();
 });
-var go = function(){
-    ctx.fillRect(0,0,w,h);
-
-    ctx.translate(w/2,h/2);
+var pprint = function(a){
+    console.log(a);
+}
+//добавить круг
+var addArc = function(R){
+    return {
+        x: 0,
+        R: R,
+        step: function(depla){
+            this.x+= delta;
+        },
+        draw: function(){
+            ctx.beginPath();
+            ctx.arc(0, this.x, this.R, 0, 2 * Math.PI, true);
+            pprint(-this.R);
+            ctx.stroke();
+        },
+        clean: function(){
+            ctx.save();
+            ctx.beginPath();
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2*ctx.lineWidth;
+            ctx.arc(0, this.x, this.R, 0, 2 * Math.PI, true);
+            ctx.stroke();
+            ctx.restore();
+        }
+    }
+};
+var drawPoint = function(){
+    ctx.save();
+    ctx.fillStyle = 'black';
     ctx.beginPath();
-    ctx.arc(0, 0, 200, 0, 2 * Math.PI, true);
-    ctx.stroke();
+    ctx.arc(0, 0, 5, 0, 2 * Math.PI, true);
+    ctx.fill();
     ctx.restore();
 }
+//массив кругов
+var arrArc = function(n){
+    var arr = [];
+    var dr = Math.ceil(Math.min(w,h)*0.5/(n + 1));
+    _.each(_.range(1,n+1),function(i){
+        arr.push(
+            new addArc(dr*i)
+        );
+    });
+    return{
+        draw: function(){
+            _.each(arr,function(inf){
+                inf.draw();
+            });
+        },
+        clean: function(){
+            _.each(arr,function(inf){
+                inf.clean();
+            });
+        }
+    }
+};
+var go = function(){
+    ctx.fillRect(0,0,w,h);
+    ctx.translate(w/2,h/2);
+    var arcs = arrArc(10);
+    arcs.draw();
+    drawPoint();
+//    ctx.beginPath();
+//    ctx.arc(0, 0, 200, 0, 2 * Math.PI, true);
+//    ctx.stroke();
+//    ctx.restore();
+};
+//Core = {
+//    draw:
+//}
