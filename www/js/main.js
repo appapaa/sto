@@ -1,4 +1,8 @@
 var w,h,ctx;
+var V = 0;
+var dl = 0;
+var dTime = 100;
+var a = 0.0001;
 $( document ).ready(function() {
 	var example = $('canvas')[0];
 	ctx = example.getContext('2d');
@@ -9,15 +13,17 @@ $( document ).ready(function() {
 	go();
 });
 var pprint = function(a){
-    console.log(a);
+   // console.log(a);
 }
 //добавить круг
 var addArc = function(R){
     return {
         x: 0,
         R: R,
-        step: function(depla){
+        step: function(delta){
+            var prevX = this.x;
             this.x+= delta;
+            return prevX;
         },
         draw: function(){
             ctx.beginPath();
@@ -58,11 +64,20 @@ var arrArc = function(n){
             _.each(arr,function(inf){
                 inf.draw();
             });
+            return this;
         },
         clean: function(){
             _.each(arr,function(inf){
                 inf.clean();
             });
+            return this;
+        },
+        step: function(d){
+            var d = d||0;
+            _.reduce(arr, function(memo, inf){
+                return inf.step(memo);
+            }, d);
+            return this;
         }
     }
 };
@@ -70,13 +85,14 @@ var go = function(){
     ctx.fillRect(0,0,w,h);
     ctx.translate(w/2,h/2);
     var arcs = arrArc(10);
-    arcs.draw();
+
     drawPoint();
-//    ctx.beginPath();
-//    ctx.arc(0, 0, 200, 0, 2 * Math.PI, true);
-//    ctx.stroke();
-//    ctx.restore();
+    arcs.draw();
+    var repeat = function(){
+       var prevL = dl;
+       dl = V*dTime + 0.5*a*dTime*dTime;
+       V += a*dTime;
+       arcs.clean().step(0.01).draw();
+    }
+    setInterval(repeat,dTime)
 };
-//Core = {
-//    draw:
-//}
