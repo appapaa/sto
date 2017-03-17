@@ -5,12 +5,14 @@ var dTime = 50;
 var a = 0.00005;
 var dr = 0;
 $( document ).ready(function() {
-	var example = $('canvas')[0];
+	var $canv = $('canvas');
+	var example = $canv[0];
 	ctx = example.getContext('2d');
 	ctx.fillStyle = 'white';
     ctx.save();
-	w =  $('canvas').width();
-	h =  $('canvas').height();
+	w =  $canv.width();
+	h =  $canv.height();
+	$canv.attr('width',$canv.width()).attr('height',$canv.height());
 	go();
 });
 var pprint = function(a){
@@ -84,9 +86,10 @@ var arrArc = function(n){
     }
 };
 var go = function(){
+	ctx.fillStyle = 'white';
     ctx.fillRect(0,0,w,h);
-    ctx.translate(w/2,h/2);
-    var arcs = arrArc(200);
+    ctx.translate(w/2,h/3);
+    var arcs = arrArc(40);
 	var c = dr/dTime;
     drawPoint();
     arcs.draw();
